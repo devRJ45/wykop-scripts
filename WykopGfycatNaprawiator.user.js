@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Wykop GfyCat Naprawiator 3000
 // @namespace    wykopgfycatnaprawiator
-// @version      0.1
+// @version      0.2
 // @description  Dodaje przycisk naprawiający linki gfycat
 // @author       devRJ45
 // @match        https://www.wykop.pl/*
@@ -16,7 +16,7 @@
 
     function repairLink (link) {
         var linkId = link.split('/').pop().split('-').shift();
-        return `https://gfycat.com/NaprawionyPrzezRJ45/pl/${linkId}`;
+        return `https://gfycat.com/\\/pl/${linkId}`;
     }
 
     function removeRepairButton () {
@@ -25,7 +25,8 @@
     }
 
     function showRepairButton () {
-        removeRepairButton();
+        if ($('a.repairGfyButton').length > 0)
+            return;
 
         var container = $('fieldset.row.buttons.selectUrl').first();
         var button = $(`<a href="#" class="repairGfyButton">Napraw link Gfy</a>`);
