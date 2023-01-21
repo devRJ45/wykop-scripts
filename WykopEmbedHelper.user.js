@@ -4,7 +4,7 @@
 // @version      0.2
 // @description  Skrypt pozwala na wklejanie obrazka ze schowka bez zapisywania go na dysku komputera
 // @author       RJ45
-// @match        https://www.wykop.pl/*
+// @match        https://wykop.pl/*
 // @grant        none
 // ==/UserScript==
 
@@ -12,8 +12,8 @@
     'use strict';
 
     window.addEventListener('paste', e => {
-        if (document.querySelector('.embedFile') && e.clipboardData.files[0]) {
-            let input = document.querySelector('.embedFile').querySelector('input');
+        if (document.querySelector('.upload') && e.clipboardData.files[0]) {
+            let input = document.querySelector('.upload').querySelector('input[type=file]');
             input.files = e.clipboardData.files;
 
             //dispatch Event
