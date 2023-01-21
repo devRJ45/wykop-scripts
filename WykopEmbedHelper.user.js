@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WykopEmbedHelper
 // @namespace    wykopembedhelper
-// @version      0.2
+// @version      0.3
 // @description  Skrypt pozwala na wklejanie obrazka ze schowka bez zapisywania go na dysku komputera
 // @author       RJ45
 // @match        https://wykop.pl/*
