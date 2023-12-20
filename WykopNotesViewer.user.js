@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WykopNotesViewer
 // @namespace    wykopembedhelper
-// @version      0.1
+// @version      0.2
 // @description  Skrypt pokazuje notatki zaraz obok jego nicku
 // @author       devRJ45
 // @match        https://wykop.pl/*
@@ -32,6 +32,7 @@
   let database = {
     options: {
       updateAfterDays: 7,
+      trimCharacter: '|',
       ...JSON.parse(localStorage.notesOptions || '{}')
     },
     notes: {
@@ -110,6 +111,16 @@
     };
   }
 
+  function getTrimmedNote (note) {
+    let characterPosition = note.indexOf(database.options.trimCharacter);
+
+    if (characterPosition > 0) {
+      return note.substring(0, characterPosition);
+    }
+
+    return note;
+  }
+
   function updateDOMNoteByUsername (username) {
     [...document.querySelectorAll('.right')].map(n => n.querySelector('a.username>span')).filter(n => n != null && n.innerText == username).forEach(async (usernameNode) => {
       let sectionNode = usernameNode.closest('section');
@@ -121,6 +132,8 @@
       let noteData = await getUserNote(username);
   
       let noteElement = sectionNode.querySelector('.erjot-note');
+
+      let trimmedNote = getTrimmedNote(noteData.note);
   
       if (noteElement != null) {
           if (noteData.note.length == 0) {
@@ -128,11 +141,11 @@
               return;
           }
   
-          noteElement.innerText = `| ${noteData.note}`;
+          noteElement.innerText = `| ${trimmedNote}`;
           return;
       }
   
-      noteElement = createNoteElement(noteData.note);
+      noteElement = createNoteElement(trimmedNote);
       usernameNode.parentNode.insertBefore(noteElement, usernameNode.nextSibling);
     });
   }
@@ -256,8 +269,9 @@
 
       if (noteData.note.length !== 0) {
         let usernameNode = userInfo.usernameNode.closest('a');
+        let trimmedNote = getTrimmedNote(noteData.note)
 
-        let noteSpan = createNoteElement(noteData.note);
+        let noteSpan = createNoteElement(trimmedNote);
 
         usernameNode.parentNode.insertBefore(noteSpan, usernameNode.nextSibling);
       }
