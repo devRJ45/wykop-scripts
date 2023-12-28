@@ -14,7 +14,7 @@
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  let pathsWhereAllowToAddNote = ['', 'mikroblog', 'ludzie', 'wpis', 'link'];
+  let pathsWhereAllowToAddNote = ['', 'mikroblog', 'ludzie', 'wpis', 'link', 'tag'];
 
   let usersNodeQueue = [];
   let queueInProcess = false;
