@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WykopNotesViewer
 // @namespace    wykopembedhelper
-// @version      0.2
+// @version      0.3
 // @description  Skrypt pokazuje notatki zaraz obok jego nicku
 // @author       devRJ45
 // @match        https://wykop.pl/*
@@ -99,6 +99,26 @@
     if (username == null || textarea == null) {
       return;
     }
+    
+    if (database.notes[username] != null) {
+      let waitingToLoadNoteInterval = setInterval(() => {
+        if (node == null) {
+          clearInterval(waitingToLoadNoteInterval);
+          return;
+        }
+  
+        if (node?.__vue__?.isPending) {
+          return;
+        }
+  
+        let currentNote = node.__vue__.form.elements.description;
+        if (currentNote != database.notes[username]?.note) {
+          addNoteToCache(username, currentNote);
+          updateDOMNoteByUsername(username);
+        }
+        clearInterval(waitingToLoadNoteInterval);
+      }, 50);
+    }
 
     const originalUpdateFunction = node.__vue__.updateDescription;
     node.__vue__.updateDescription = () => {
@@ -115,7 +135,7 @@
     let characterPosition = note.indexOf(database.options.trimCharacter);
 
     if (characterPosition > 0) {
-      return note.substring(0, characterPosition);
+      return note.substring(0, characterPosition) + ' »';
     }
 
     return note;
@@ -161,7 +181,7 @@
     };
 
     if (apiProblem) {
-      database.note[username].tryRequestAfter = new Date(Date.now() + 1000 * 60 * 60);
+      database.notes[username].tryRequestAfter = new Date(Date.now() + 1000 * 60 * 60);
     }
 
     saveCacheNotesToStorage();
