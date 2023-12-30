@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         WykopNotesViewer
-// @namespace    wykopembedhelper
+// @namespace    wykopnotesviewer
 // @version      0.3
 // @description  Skrypt pokazuje notatki zaraz obok jego nicku
 // @author       devRJ45
