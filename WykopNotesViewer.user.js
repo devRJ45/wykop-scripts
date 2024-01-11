@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WykopNotesViewer
 // @namespace    wykopnotesviewer
-// @version      0.3
+// @version      0.4
 // @description  Skrypt pokazuje notatki zaraz obok jego nicku
 // @author       devRJ45
 // @match        https://wykop.pl/*
@@ -52,6 +52,28 @@
 
   const updateAterDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * database.options.updateAfterDays);
 
+  const changeTextObserver = new MutationObserver(mutationList => {
+    mutationList.forEach(m => {
+      if (m.type !== 'characterData') {
+        return;
+      } 
+      let userNode = m.target.parentNode?.closest('.right');
+
+      if (userNode == null) {
+        return;
+      }
+      
+      userNode.querySelectorAll('.erjot-note').forEach( oldNote => {
+        oldNote.remove();
+      });
+
+      [...userNode.querySelectorAll('a.username>span')].forEach( u => {
+        addUserNodeToQueue(u);
+      });
+
+    })
+  });
+
   const mutationObserver = new MutationObserver(mutationList => {
     let currentPath = document.location.pathname.split('/')[1];
     if (currentPath == null) {
@@ -74,15 +96,24 @@
           hookUserInfoTextarea(node.querySelector('section.user-note'));
         }
 
-        if (node.querySelectorAll('div.right') == null) {
-          return;
+        if (node.classList.contains('tooltip-slot')) {
+          node.closest('.right')?.querySelectorAll('.erjot-note').forEach( oldNote => {
+            oldNote.remove();
+          });
+
+          [...node.querySelectorAll('a.username>span')].forEach( u => {
+            addUserNodeToQueue(u);
+            changeTextObserver.observe(u.parentNode, { characterData: true, subtree: true });
+          });
         }
 
         [...node.querySelectorAll('div.right')].forEach( n => {
           [...n.querySelectorAll('a.username>span')].forEach( u => {
             addUserNodeToQueue(u);
+            changeTextObserver.observe(u.parentNode, { characterData: true, subtree: true });
           });
         });
+        
       });
     });
   });
