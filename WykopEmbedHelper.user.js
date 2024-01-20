@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WykopEmbedHelper
 // @namespace    wykopembedhelper
-// @version      0.4
+// @version      0.4.1
 // @description  Skrypt pozwala na wklejanie obrazka ze schowka bez zapisywania go na dysku komputera
 // @author       RJ45
 // @match        https://wykop.pl/*
@@ -13,12 +13,14 @@
 
     window.addEventListener('paste', e => {
         let file = e?.clipboardData?.files[0];
-        let dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-
+        
         if (file == null) {
             return;
         }
+
+        let dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+
 
         if (document.querySelector('.upload')) {
             let input = document.querySelector('.upload').querySelector('input[type=file]');
