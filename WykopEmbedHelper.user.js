@@ -26,9 +26,6 @@
             let input = document.querySelector('.upload').querySelector('input[type=file]');
             input.files = dataTransfer.files;
 
-            console.log(input.files);
-
-            //dispatch Event
             let event = new Event('HTMLEvents');
             event.initEvent('change', false, true);
             input.dispatchEvent(event);
