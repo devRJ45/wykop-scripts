@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WykopLists
 // @namespace    wykoplists
-// @version      0.1
+// @version      0.1.1
 // @description  Skrypt wołania plusujących użytkowników
 // @author       devRJ45
 // @match        https://wykop.pl/*
@@ -18,14 +18,6 @@ const style = document.createElement('style');
     right: 20px;
     z-index: 68;
   };
-
-  li.account>ul>li.lists-settings a:before {
-    -webkit-mask-size: 20px 20px;
-    mask-size: 20px 20px;
-    -webkit-mask-image: url(https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/text_to_speech/default/24px.svg);
-    mask-image: url(https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/text_to_speech/default/24px.svg);
-  }
-
   .wykop-list-modal section.modal {
     padding-top: 16px;
   }
@@ -45,12 +37,6 @@ const style = document.createElement('style');
   p.lists-settings-footer a {
     font-weight: 600;
     color: var(--steelBluish);
-  }
-  ul.dropdown:not(.clear-styles) ul.actions[data-v-1635e6b9] li.icon-lists span:before {
-    -webkit-mask-size: 15px 17px;
-    mask-size: 15px 17px;
-    -webkit-mask-image: url(https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/text_to_speech/default/24px.svg);
-    mask-image: url(https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/text_to_speech/default/24px.svg);
   }
   div.wykop-lists-button {
     margin-top: 10px;
