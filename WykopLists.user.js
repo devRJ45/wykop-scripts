@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         WykopLists
 // @namespace    wykoplists
-// @version      0.1.1
+// @version      0.2
 // @description  Skrypt wołania plusujących użytkowników
 // @author       devRJ45
 // @match        https://wykop.pl/*
@@ -775,18 +775,36 @@ class WykopLists {
     })
   }
 
-  _getEntryIdFromUrl = (url) => {
+  _getIdFromUrl = (url) => {
+    let ids = {};
+
+    if (url.indexOf('#') > 0) {
+      let commentId = parseInt(url.substring(url.indexOf('#')+1));
+      if (commentId != null && !isNaN(commentId)) {
+        ids.commentId = commentId;
+      }
+    }
+
     let urlFragments = url.split('/');
     for (var i = 0; i < urlFragments.length; i++) {
       if (urlFragments[i].toLowerCase() == 'wpis') {
-        return parseInt(urlFragments[i+1]);
+        ids.entryId = parseInt(urlFragments[i+1]);
+        return ids;
       }
     }
     return null;
   }
 
-  _getEntryVoters = async (entryId) => {
-    let response = await fetch(`https://wykop.pl/api/v3/entries/${entryId}/votes`, {
+  _getVoters = async (entryId, commentId) => {
+    let uri = '';
+
+    if (commentId == null) {
+      uri = `https://wykop.pl/api/v3/entries/${entryId}/votes`;
+    } else {
+      uri = `https://wykop.pl/api/v3/entries/${entryId}/comments/${commentId}/votes`
+    }
+
+    let response = await fetch(uri, {
       headers: {
         'Authorization': `Bearer ${localStorage.token}`
       }
@@ -837,9 +855,9 @@ class WykopLists {
 
     modal.content.innerHTML = `
     <div data-v-99298700="" data-v-6b45e4be="" class="form-group" data-v-6d2da140="">
-      <label data-v-99298700="">Zawołaj plusujących z tego wpisu:</label>
+      <label data-v-99298700="">Zawołaj plusujących z tego wpisu lub komentarza:</label>
       <div data-v-99298700="" class="field">
-        <input data-v-6486857b="" data-v-99298700="" type="text" class="wl-voters-url" placeholder="Link do wpisu z plusującymi" value="">
+        <input data-v-6486857b="" data-v-99298700="" type="text" class="wl-voters-url" placeholder="Link do wpisu/komentarza z plusującymi" value="">
       </div>
       <div class="wykop-lists-center">
         <div class="button filled normal wide blue-color wykop-lists-button">
@@ -864,9 +882,10 @@ class WykopLists {
       let commentsToWrite = [];
       let profileInfo = this._getLoggedProfileInfo();
 
+      let votersFromIds = this._getIdFromUrl(votersListUrl);
+
       try {
-        let votersEntryId = this._getEntryIdFromUrl(votersListUrl);
-        let voters = await this._getEntryVoters(votersEntryId);
+        let voters = await this._getVoters(votersFromIds.entryId, votersFromIds.commentId);
         
         totalVotersCount = voters.length;
 
@@ -884,6 +903,7 @@ class WykopLists {
       
       modal.content.innerHTML = `
         <p>
+          Plusujący są pobrani z <strong>${votersFromIds.commentId == null ? 'wpisu' : 'komentarza'}</strong><br>
           Liczba plusujących: <strong>${totalVotersCount}</strong><br>
           Zawołanych zostanie <strong>${totalVotersCount-removedUsersCount}</strong> użytkowników<span style="${removedUsersCount == 0 ? 'display: none;' : ''}"> poneiważ <strong>${removedUsersCount}</strong> użytkowników usunęło konta.</span><br>
           Twój kolor to <span class="${profileInfo.userColor}-profile profile-color">${profileInfo.plColor}</span>, więc możesz zawołać <strong>${profileInfo.maxUsersInEntry}</strong> użytkowników w jednym komentarzu.<br>
